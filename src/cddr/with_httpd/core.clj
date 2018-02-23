@@ -23,11 +23,12 @@
     (handler request)))    
 
 (defn call-with-handler
-  [handler f]
+  [f handler opts]
   (binding [*request-log* (atom [])]
     (let [h (-> handler
                 (log-request *request-log*))
-          s (jetty/run-jetty h {:join? false :port 3000})]
+          s (jetty/run-jetty h (assoc opts
+                                      :join? false))]
       (try
         (f)
         (finally
@@ -35,8 +36,9 @@
 
 (defmacro with-handler
   "I don't do a whole lot."
-  [handler & body]
-  `(call-with-handler ~handler
-                      (fn []
-                        ~@body)))
+  [handler opts & body]
+  `(call-with-handler (fn []
+                        ~@body)
+                      ~handler
+                      ~opts))
                           

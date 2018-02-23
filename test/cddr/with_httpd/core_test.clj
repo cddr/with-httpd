@@ -11,7 +11,7 @@
 
 (deftest test-with-handler
   (testing "fake api"
-    (with-handler fake-api
+    (with-handler fake-api {:port 3000}
       (let [{:keys [status body]} (http/get "http://localhost:3000")]
         (is (= status 200))
         (is (= body "yolo"))))))
